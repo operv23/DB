@@ -1,10 +1,30 @@
 <?php
 /**
  * Webhook for Time Bot- Facebook Messenger Bot
- * User: adnan
- * Date: 24/04/16
- * Time: 3:26 PM
  */
+
+//---------DB----------//
+
+mysql://b3dfd00d3f8fc1:f2319eb0@us-cdbr-iron-east-04.cleardb.net/heroku_cf74a6558cae1bc?reconnect=true
+
+    $url=parse_url(getenv("CLEARDB_DATABASE_URL"));
+
+    $server = $url["us-cdbr-iron-east-04.cleardb.net"];
+    $username = $url["b3dfd00d3f8fc1"];
+    $password = $url["f2319eb0"];
+    $db = substr($url["heroku_cf74a6558cae1bc"],1);
+
+    mysqli_connect($server, $username, $password);
+
+
+    mysqli_select_db($db);
+    
+    $query = mysql_query("SELECT * FROM db");
+	$data = mysql_fetch_assoc($query);
+
+//---------DB----------//
+
+
 $access_token = "EAAEIpvTLTHcBAHmKn8dUf8Y4fY5QwUhyRBNaXHcxZC1t6zsUFoEi2ewO5hXomrlZCNgBo98RhqIAE31MoV1L682c7Qgik09rZBowIKvwbs4MXXfmHJgawpZBc81aRGI6SFh7VAb7ESBVwm9nErhpSDhqsetrNqL0PIFjZC99ZBACyU5cKwzk6ZA";
 $verify_token = "Zaq1Xsw2";
 $hub_verify_token = null;
@@ -14,6 +34,7 @@ if(isset($_REQUEST['hub_challenge'])) {
 }
 if ($hub_verify_token === $verify_token) {
     echo $challenge;
+
 }
 $input = json_decode(file_get_contents('php://input'), true);
 $sender = $input['entry'][0]['messaging'][0]['sender']['id'];
@@ -30,7 +51,8 @@ if(preg_match('[time|current time|now]', strtolower($message))) {
         $message_to_reply = $result;
     }
 } else {
-    $message_to_reply = 'Huh! what do you mean?';
+	if ($input == $data['id']) { $message_to_reply = $data['value']; }else{
+    $message_to_reply = 'Huh! what do you mean?';}
 }
 //API Url
 $url = 'https://graph.facebook.com/v2.6/me/messages?access_token='.$access_token;
