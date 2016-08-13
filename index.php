@@ -2,25 +2,28 @@
 /**
  * Webhook for Time Bot- Facebook Messenger Bot
  */
-
 //---------DB----------//
 
-mysql://b3dfd00d3f8fc1:f2319eb0@us-cdbr-iron-east-04.cleardb.net/heroku_cf74a6558cae1bc?reconnect=true
+if ($_SERVER['SERVER_NAME'] == "calm-hamlet-61003.herokuapp.com") {
+    $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+    $host = $url["host"];
+    $username = $url["user"];
+    $password = $url["pass"];
+    $dbname = substr($url["path"], 1);
+} else { 
+    $host = "localhost";
+    $dbname = "IVR";
+    $username = "root";
+    $password = "1";
+}
 
-    $url=parse_url(getenv("CLEARDB_DATABASE_URL"));
+$link = mysqli_connect($host, $username, $password, $dbname);
 
-    $server = $url["us-cdbr-iron-east-04.cleardb.net"];
-    $username = $url["b3dfd00d3f8fc1"];
-    $password = $url["f2319eb0"];
-    $db = substr($url["heroku_cf74a6558cae1bc"],1);
-
-    mysqli_connect($server, $username, $password);
-
-
-    mysqli_select_db($db);
-    
-    $query = mysql_query("SELECT * FROM db");
-	$data = mysql_fetch_assoc($query);
+/* проверка соединения */
+if (mysqli_connect_errno()) {
+    printf("Не удалось подключиться: %s\n", mysqli_connect_error());
+    exit();
+}
 
 //---------DB----------//
 
@@ -51,8 +54,20 @@ if(preg_match('[time|current time|now]', strtolower($message))) {
         $message_to_reply = $result;
     }
 } else {
-	if ($input == $data['id']) { $message_to_reply = $data['value']; }else{
+
+$zapros="SELECT value FROM IVR WHERE id='".$message."' LIMIT 1";
+
+if ($result = mysqli_query($link, $zapros)) {
+
+    $message_to_reply = $result['value']; }else{
     $message_to_reply = 'Huh! what do you mean?';}
+
+    mysqli_free_result($result);
+}else{echo "nop. sorry\n";}
+
+
+mysqli_close($link);
+
 }
 //API Url
 $url = 'https://graph.facebook.com/v2.6/me/messages?access_token='.$access_token;
@@ -80,3 +95,4 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 if(!empty($input['entry'][0]['messaging'][0]['message'])){
     $result = curl_exec($ch);
 }
+

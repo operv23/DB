@@ -1,7 +1,6 @@
 {
     "name": "root/html",
 	    "require": {
-			"php": "^7.0.8",
-			"ext-mysql": "*"	
+			"php": "^7.0.8"
 		}
 }
