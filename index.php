@@ -2,6 +2,7 @@
 /**
  * Webhook for Time Bot- Facebook Messenger Bot
  */
+echo "!!!";
 //---------DB----------//
 
 if ($_SERVER['SERVER_NAME'] == "calm-hamlet-61003.herokuapp.com") {
