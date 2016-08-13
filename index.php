@@ -25,6 +25,19 @@ if (mysqli_connect_errno()) {
     exit();
 }
 
+$zapros="SELECT value FROM IVR WHERE id='1' LIMIT 1";
+
+if ($result = mysqli_query($link, $zapros)) {
+
+    echo $result['value']; }else{
+    echo 'Huh! what do you mean?';}
+
+    mysqli_free_result($result);
+}else{echo 'Hm! Something went wrong';}
+
+
+mysqli_close($link);
+
 //---------DB----------//
 
 
