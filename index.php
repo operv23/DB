@@ -63,7 +63,7 @@ if ($result = mysqli_query($link, $zapros)) {
     $message_to_reply = 'Huh! what do you mean?';}
 
     mysqli_free_result($result);
-}else{echo "nop. sorry\n";}
+}else{$message_to_reply = 'Hm! Something went wrong';}
 
 
 mysqli_close($link);
